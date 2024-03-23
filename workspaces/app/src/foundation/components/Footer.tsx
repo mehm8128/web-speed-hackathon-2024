@@ -1,5 +1,5 @@
 import { useSetAtom } from 'jotai';
-import React from 'react';
+import React, { Suspense } from 'react';
 import styled from 'styled-components';
 
 import { DialogContentAtom } from '../atoms/DialogContentAtom';
@@ -7,12 +7,13 @@ import { Color, Space } from '../styles/variables';
 
 import { Box } from './Box';
 import { Button } from './Button';
-import CompanyDialogContent from './CompanyDialogContent';
-import ContactDialogContent from './ContactDialogContent';
 import { Flex } from './Flex';
-import OverviewDialogContent from './OverviewDialogContent';
-import QuestionDialogContent from './QuestionDialogContent';
-import TermDialogContent from './TermDialogContent';
+
+const CompanyDialogContent = React.lazy(() => import('./CompanyDialogContent'));
+const ContactDialogContent = React.lazy(() => import('./ContactDialogContent'));
+const OverviewDialogContent = React.lazy(() => import('./OverviewDialogContent'));
+const QuestionDialogContent = React.lazy(() => import('./QuestionDialogContent'));
+const TermDialogContent = React.lazy(() => import('./TermDialogContent'));
 
 const _Button = styled(Button)`
   color: ${Color.MONO_A};
@@ -28,23 +29,43 @@ export const Footer: React.FC = () => {
   const updateDialogContent = useSetAtom(DialogContentAtom);
 
   const handleRequestToTermDialogOpen = () => {
-    updateDialogContent(<TermDialogContent />);
+    updateDialogContent(
+      <Suspense>
+        <TermDialogContent />
+      </Suspense>,
+    );
   };
 
   const handleRequestToContactDialogOpen = () => {
-    updateDialogContent(<ContactDialogContent />);
+    updateDialogContent(
+      <Suspense>
+        <ContactDialogContent />
+      </Suspense>,
+    );
   };
 
   const handleRequestToQuestionDialogOpen = () => {
-    updateDialogContent(<QuestionDialogContent />);
+    updateDialogContent(
+      <Suspense>
+        <QuestionDialogContent />
+      </Suspense>,
+    );
   };
 
   const handleRequestToCompanyDialogOpen = () => {
-    updateDialogContent(<CompanyDialogContent />);
+    updateDialogContent(
+      <Suspense>
+        <CompanyDialogContent />
+      </Suspense>,
+    );
   };
 
   const handleRequestToOverviewDialogOpen = () => {
-    updateDialogContent(<OverviewDialogContent />);
+    updateDialogContent(
+      <Suspense>
+        <OverviewDialogContent />
+      </Suspense>,
+    );
   };
 
   return (
