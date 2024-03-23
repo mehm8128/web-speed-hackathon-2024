@@ -11,6 +11,10 @@ import { Features } from './internal/Features';
 import { Ranking } from './internal/Ranking';
 import { Releases } from './internal/Releases';
 
+// preload('/api/v1/features', apiClient.get);
+// preload('/api/v1/rankings', apiClient.get);
+// preload(`/api/v1/releases/${getDayOfWeekStr(new Date())}`, apiClient.get);
+
 const TopPage: React.FC = () => {
   const pickupA11yId = useId();
   const rankingA11yId = useId();

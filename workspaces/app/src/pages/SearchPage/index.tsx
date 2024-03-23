@@ -8,6 +8,8 @@ import { Color, Space, Typography } from '../../foundation/styles/variables';
 import { Input } from './internal/Input';
 import { SearchResult } from './internal/SearchResult';
 
+// preload('/api/v1/books', apiClient.get);
+
 const SearchPage: React.FC = () => {
   const { data: books } = useBookList({ query: {} });
 
