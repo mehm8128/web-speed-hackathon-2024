@@ -21,7 +21,7 @@ const Releases: React.FC = () => {
 
 const ReleasesWithSuspense: React.FC = () => {
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<div style={{ height: 244 }} />}>
       <Releases />
     </Suspense>
   );

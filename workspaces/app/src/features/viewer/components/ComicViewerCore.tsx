@@ -215,9 +215,13 @@ const ComicViewerCore: React.FC<Props> = ({ episodeId }) => {
   );
 };
 
-const ComicViewerCoreWithSuspense: React.FC<Props> = ({ episodeId }) => {
+const ComicViewerCoreWithSuspense: React.FC<
+  Props & {
+    height: number;
+  }
+> = ({ episodeId, height }) => {
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<div style={{ height }} />}>
       <ComicViewerCore episodeId={episodeId} />
     </Suspense>
   );

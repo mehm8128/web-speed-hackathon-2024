@@ -19,7 +19,7 @@ const Features: React.FC = () => {
 
 const FeaturesWithSuspense: React.FC = () => {
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<div style={{ height: 220 }} />}>
       <Features />
     </Suspense>
   );

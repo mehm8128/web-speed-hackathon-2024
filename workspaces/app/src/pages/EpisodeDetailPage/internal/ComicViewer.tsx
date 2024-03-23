@@ -56,7 +56,7 @@ export const ComicViewer: React.FC<Props> = ({ episodeId }) => {
   return (
     <_Container ref={ref}>
       <_Wrapper $maxHeight={viewerHeight}>
-        <ComicViewerCore episodeId={episodeId} />
+        <ComicViewerCore episodeId={episodeId} height={viewerHeight} />
       </_Wrapper>
     </_Container>
   );
