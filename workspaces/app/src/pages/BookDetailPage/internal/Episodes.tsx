@@ -17,7 +17,7 @@ const Episodes: React.FC<Props> = ({ bookId }) => {
   return (
     <Flex align="center" as="ul" direction="column" justify="center">
       {episodeList.map((episode) => (
-        <EpisodeListItem key={episode.id} bookId={bookId} episodeId={episode.id} />
+        <EpisodeListItem key={episode.id} bookId={bookId} episode={episode} />
       ))}
       {episodeList.length === 0 && (
         <>
