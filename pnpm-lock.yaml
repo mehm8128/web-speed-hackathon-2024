@@ -132,9 +132,6 @@ importers:
       jquery:
         specifier: 3.7.1
         version: 3.7.1
-      moment-timezone:
-        specifier: 0.5.45
-        version: 0.5.45
       react:
         specifier: 18.2.0
         version: 18.2.0
