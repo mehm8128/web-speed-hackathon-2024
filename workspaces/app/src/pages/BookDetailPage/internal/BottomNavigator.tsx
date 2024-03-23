@@ -1,7 +1,8 @@
 import { animated, useSpring } from '@react-spring/web';
-import { useCallback } from 'react';
+import { Suspense, useCallback } from 'react';
 import { styled } from 'styled-components';
 
+import { useEpisodeList } from '../../../features/episode/hooks/useEpisodeList';
 import { Link } from '../../../foundation/components/Link';
 import { Color, Radius, Space } from '../../../foundation/styles/variables';
 
@@ -38,11 +39,14 @@ const _ReadLink = styled(Link)`
 type Props = {
   bookId: string;
   isFavorite: boolean;
-  latestEpisodeId: string;
   onClickFav: () => void;
 };
 
-export const BottomNavigator: React.FC<Props> = ({ bookId, isFavorite, latestEpisodeId, onClickFav }) => {
+const BottomNavigator: React.FC<Props> = ({ bookId, isFavorite, onClickFav }) => {
+  const { data: episodeList } = useEpisodeList({ query: { bookId } });
+
+  const latestEpisodeId = episodeList.find((episode) => episode.chapter === 1)?.id ?? '';
+
   const props = useSpring({
     from: { transform: 'translateY(100%)' },
     to: { transform: 'translateY(0)' },
@@ -63,3 +67,13 @@ export const BottomNavigator: React.FC<Props> = ({ bookId, isFavorite, latestEpi
     </_Wrapper>
   );
 };
+
+const BottomNavigatorWithSuspense: React.FC<Props> = ({ bookId, isFavorite, onClickFav }) => {
+  return (
+    <Suspense fallback={null}>
+      <BottomNavigator bookId={bookId} isFavorite={isFavorite} onClickFav={onClickFav} />
+    </Suspense>
+  );
+};
+
+export { BottomNavigatorWithSuspense as BottomNavigator };
