@@ -1,7 +1,7 @@
 import { useId } from 'react';
 import styled from 'styled-components';
 
-import { useConst } from '../../features/consts/hooks/useConst';
+import { QUESTION } from '../constants/Question';
 import { Color, Space, Typography } from '../styles/variables';
 
 import { Spacer } from './Spacer';
@@ -11,7 +11,6 @@ const _Content = styled.section`
   white-space: pre-line;
 `;
 export default function QuestionDialogContent() {
-  const { data } = useConst({ params: { id: 'question' } });
   const questionDialogA11yId = useId();
 
   return (
@@ -21,7 +20,7 @@ export default function QuestionDialogContent() {
       </Text>
       <Spacer height={Space * 1} />
       <Text as="p" color={Color.MONO_100} typography={Typography.NORMAL12}>
-        {data}
+        {QUESTION}
       </Text>
     </_Content>
   );
