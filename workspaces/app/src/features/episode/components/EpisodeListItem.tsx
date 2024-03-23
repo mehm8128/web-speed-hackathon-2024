@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import styled from 'styled-components';
 
 import { Box } from '../../../foundation/components/Box';
@@ -70,3 +71,13 @@ export const EpisodeListItem: React.FC<Props> = ({ bookId, episodeId }) => {
     </_Wrapper>
   );
 };
+
+const EpisodeLiteItemWithSuspense: React.FC<Props> = (props) => {
+  return (
+    <Suspense fallback={null}>
+      <EpisodeListItem {...props} />
+    </Suspense>
+  );
+};
+
+export { EpisodeLiteItemWithSuspense as EpisodeLiteItem };
