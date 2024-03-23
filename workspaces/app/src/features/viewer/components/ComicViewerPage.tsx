@@ -14,10 +14,11 @@ const _Canvas = styled.canvas`
 `;
 
 type Props = {
+  height: number;
   pageImageId: string;
 };
 
-export const ComicViewerPage = ({ pageImageId }: Props) => {
+export const ComicViewerPage = ({ height, pageImageId }: Props) => {
   const ref = useRef<HTMLCanvasElement>(null);
 
   useAsync(async () => {
@@ -45,5 +46,5 @@ export const ComicViewerPage = ({ pageImageId }: Props) => {
     canvas.setAttribute('role', 'img');
   }, [pageImageId]);
 
-  return <_Canvas ref={ref} />;
+  return <_Canvas ref={ref} height={height} />;
 };

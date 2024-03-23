@@ -93,9 +93,10 @@ const _Wrapper = styled.div<{
 
 type Props = {
   episodeId: string;
+  height: number;
 };
 
-const ComicViewerCore: React.FC<Props> = ({ episodeId }) => {
+const ComicViewerCore: React.FC<Props> = ({ episodeId, height }) => {
   // 画面のリサイズに合わせて再描画する
   const rerender = useUpdate();
   useInterval(rerender, 0);
@@ -208,21 +209,17 @@ const ComicViewerCore: React.FC<Props> = ({ episodeId }) => {
     <_Container ref={containerRef}>
       <_Wrapper ref={scrollViewRef} $paddingInline={viewerPaddingInline} $pageWidth={pageWidth}>
         {episode.pages.map((page) => {
-          return <ComicViewerPage key={page.id} pageImageId={page.image.id} />;
+          return <ComicViewerPage key={page.id} height={height} pageImageId={page.image.id} />;
         })}
       </_Wrapper>
     </_Container>
   );
 };
 
-const ComicViewerCoreWithSuspense: React.FC<
-  Props & {
-    height: number;
-  }
-> = ({ episodeId, height }) => {
+const ComicViewerCoreWithSuspense: React.FC<Props> = ({ episodeId, height }) => {
   return (
     <Suspense fallback={<div style={{ height }} />}>
-      <ComicViewerCore episodeId={episodeId} />
+      <ComicViewerCore episodeId={episodeId} height={height} />
     </Suspense>
   );
 };

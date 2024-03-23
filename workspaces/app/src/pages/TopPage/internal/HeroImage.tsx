@@ -113,13 +113,7 @@ void main() {
 
   return (
     <_Wrapper>
-      <_Image
-        ref={imageRef}
-        alt="Cyber TOON"
-        height={(4096 / window.devicePixelRatio / 16) * 9}
-        src="/assets/output.jpg"
-        width={4096 / window.devicePixelRatio}
-      />
+      <_Image ref={imageRef} alt="Cyber TOON" height={576} src="/assets/output.jpg" width={1024} />
     </_Wrapper>
   );
 };
