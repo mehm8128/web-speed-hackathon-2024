@@ -17,7 +17,7 @@ import {
   Tr,
 } from '@chakra-ui/react';
 import { Link } from '@tanstack/react-router';
-import { useToggle } from '@uidotdev/usehooks';
+import { useState } from 'react';
 
 import { useBook } from '../../../../features/books/hooks/useBook';
 import { useEpisodeList } from '../../../../features/episodes/hooks/useEpisodeList';
@@ -35,7 +35,7 @@ export const BookDetailModal: React.FC<Props> = ({ bookId, isOpen, onClose }) =>
   const { data: episodeList } = useEpisodeList({ bookId });
   const { data: book } = useBook({ bookId });
 
-  const [isEdit, toggleIEdit] = useToggle(false);
+  const [isEdit, toggleIsEdit] = useState(false);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="4xl">
@@ -46,9 +46,9 @@ export const BookDetailModal: React.FC<Props> = ({ bookId, isOpen, onClose }) =>
           {book != null && (
             <>
               {isEdit ? (
-                <BookEditContent book={book} onEditComplete={() => toggleIEdit()} />
+                <BookEditContent book={book} onEditComplete={() => toggleIsEdit(!isEdit)} />
               ) : (
-                <BookDetailContent book={book} onCloseDialog={onClose} onEdit={() => toggleIEdit()} />
+                <BookDetailContent book={book} onCloseDialog={onClose} onEdit={() => toggleIsEdit(!isEdit)} />
               )}
             </>
           )}
