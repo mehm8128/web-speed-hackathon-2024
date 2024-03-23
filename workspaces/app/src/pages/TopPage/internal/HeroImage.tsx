@@ -2,7 +2,6 @@ import { useCallback, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { Mesh, OrthographicCamera, PlaneGeometry, Scene, ShaderMaterial, TextureLoader, WebGLRenderer } from 'three';
 
-
 const _Wrapper = styled.div`
   aspect-ratio: 16 / 9;
   width: 100%;
@@ -114,7 +113,13 @@ void main() {
 
   return (
     <_Wrapper>
-      <_Image ref={imageRef} alt="Cyber TOON" />
+      <_Image
+        ref={imageRef}
+        alt="Cyber TOON"
+        height={(4096 / window.devicePixelRatio / 16) * 9}
+        src="/assets/output.jpg"
+        width={4096 / window.devicePixelRatio}
+      />
     </_Wrapper>
   );
 };
