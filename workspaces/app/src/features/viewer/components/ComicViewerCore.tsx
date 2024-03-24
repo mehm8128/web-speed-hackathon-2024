@@ -1,5 +1,4 @@
 import { Suspense, useEffect, useState } from 'react';
-import { useInterval, useUpdate } from 'react-use';
 import styled from 'styled-components';
 
 import { addUnitIfNeeded } from '../../../lib/css/addUnitIfNeeded';
@@ -97,10 +96,6 @@ type Props = {
 };
 
 const ComicViewerCore: React.FC<Props> = ({ episodeId, height }) => {
-  // 画面のリサイズに合わせて再描画する
-  const rerender = useUpdate();
-  useInterval(rerender, 0);
-
   const { data: episode } = useEpisode({ params: { episodeId } });
 
   const [container, containerRef] = useState<HTMLDivElement | null>(null);
