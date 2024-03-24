@@ -29,7 +29,7 @@ export type Props = {
   onClose: () => void;
 };
 
-export const AuthorDetailModal: React.FC<Props> = ({ authorId, isOpen, onClose }) => {
+const AuthorDetailModal: React.FC<Props> = ({ authorId, isOpen, onClose }) => {
   const { data: allBookList } = useBookList();
   const { data: author } = useAuthor({ authorId });
   const [isEdit, toggleIsEdit] = useState(false);
@@ -92,3 +92,5 @@ export const AuthorDetailModal: React.FC<Props> = ({ authorId, isOpen, onClose }
     </Modal>
   );
 };
+
+export default AuthorDetailModal;

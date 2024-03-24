@@ -30,7 +30,7 @@ export type Props = {
   onClose: () => void;
 };
 
-export const CreateAuthorModal: React.FC<Props> = ({ isOpen, onClose }) => {
+const CreateAuthorModal: React.FC<Props> = ({ isOpen, onClose }) => {
   const { mutate: createAuthor } = useCreateAuthor();
 
   const formik = useFormik({
@@ -191,3 +191,5 @@ export const CreateAuthorModal: React.FC<Props> = ({ isOpen, onClose }) => {
     </Modal>
   );
 };
+
+export default CreateAuthorModal;

@@ -14,7 +14,7 @@ type Props = {
   onClose: () => void;
 };
 
-export const BookDetailModal: React.FC<Props> = ({ bookId, isOpen, onClose }) => {
+const BookDetailModal: React.FC<Props> = ({ bookId, isOpen, onClose }) => {
   const { data: book } = useBook({ bookId });
 
   const [isEdit, toggleIsEdit] = useState(false);
@@ -56,3 +56,5 @@ export const BookDetailModal: React.FC<Props> = ({ bookId, isOpen, onClose }) =>
     </Modal>
   );
 };
+
+export default BookDetailModal;

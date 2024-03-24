@@ -17,14 +17,14 @@ import {
   Thead,
   Tr,
 } from '@chakra-ui/react';
-import { useId, useMemo, useState } from 'react';
+import { lazy, Suspense, useId, useMemo, useState } from 'react';
 import { useForm, useWatch } from 'react-hook-form';
 
 import { useBookList } from '../../features/books/hooks/useBookList';
 import { isContains } from '../../lib/filter/isContains';
 
-import { BookDetailModal } from './internal/BookDetailModal';
-import { CreateBookModal } from './internal/CreateBookModal';
+const BookDetailModal = lazy(() => import('./internal/BookDetailModal'));
+const CreateBookModal = lazy(() => import('./internal/CreateBookModal'));
 
 const BookSearchKind = {
   AuthorId: 'AuthorId',
@@ -209,9 +209,15 @@ export const BookListPage: React.FC = () => {
       </Stack>
 
       {modal.mode === BookModalMode.Detail ? (
-        <BookDetailModal isOpen bookId={modal.params.bookId} onClose={() => modalMethod.close()} />
+        <Suspense>
+          <BookDetailModal isOpen bookId={modal.params.bookId} onClose={() => modalMethod.close()} />
+        </Suspense>
       ) : null}
-      {modal.mode === BookModalMode.Create ? <CreateBookModal isOpen onClose={() => modalMethod.close()} /> : null}
+      {modal.mode === BookModalMode.Create ? (
+        <Suspense>
+          <CreateBookModal isOpen onClose={() => modalMethod.close()} />
+        </Suspense>
+      ) : null}
     </>
   );
 };

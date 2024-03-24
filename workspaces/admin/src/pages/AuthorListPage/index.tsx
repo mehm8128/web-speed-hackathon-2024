@@ -18,13 +18,13 @@ import {
   Tr,
 } from '@chakra-ui/react';
 import { useFormik } from 'formik';
-import { useId, useMemo, useState } from 'react';
+import { lazy, Suspense, useId, useMemo, useState } from 'react';
 
 import { useAuthorList } from '../../features/authors/hooks/useAuthorList';
 import { isContains } from '../../lib/filter/isContains';
 
-import { AuthorDetailModal } from './internal/AuthorDetailModal';
-import { CreateAuthorModal } from './internal/CreateAuthorModal';
+const AuthorDetailModal = lazy(() => import('./internal/AuthorDetailModal'));
+const CreateAuthorModal = lazy(() => import('./internal/CreateAuthorModal'));
 
 const AuthorSearchKind = {
   AuthorId: 'AuthorId',
@@ -199,9 +199,15 @@ export const AuthorListPage: React.FC = () => {
       </Stack>
 
       {modal.mode === AuthorModalMode.Detail ? (
-        <AuthorDetailModal isOpen authorId={modal.params.authorId} onClose={() => modalMethod.close()} />
+        <Suspense>
+          <AuthorDetailModal isOpen authorId={modal.params.authorId} onClose={() => modalMethod.close()} />
+        </Suspense>
       ) : null}
-      {modal.mode === AuthorModalMode.Create ? <CreateAuthorModal isOpen onClose={() => modalMethod.close()} /> : null}
+      {modal.mode === AuthorModalMode.Create ? (
+        <Suspense>
+          <CreateAuthorModal isOpen onClose={() => modalMethod.close()} />
+        </Suspense>
+      ) : null}
     </>
   );
 };
