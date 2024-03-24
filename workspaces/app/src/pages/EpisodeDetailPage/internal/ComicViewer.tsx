@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useState } from 'react';
 import { useInterval, useUpdate } from 'react-use';
 import styled from 'styled-components';
 
@@ -39,10 +39,10 @@ export const ComicViewer: React.FC<Props> = ({ episodeId }) => {
   const rerender = useUpdate();
   useInterval(rerender, 0);
 
-  const ref = useRef<HTMLDivElement | null>(null);
+  const [el, ref] = useState<HTMLDivElement | null>(null);
 
   // コンテナの幅
-  const cqw = (ref.current?.getBoundingClientRect().width ?? 0) / 100;
+  const cqw = (el?.getBoundingClientRect().width ?? 0) / 100;
 
   // 1画面に表示できるページ数（1 or 2）
   const pageCountParView = 100 * cqw <= 2 * MIN_PAGE_WIDTH ? 1 : 2;

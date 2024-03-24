@@ -1,4 +1,4 @@
-import { Suspense, useEffect, useRef } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useInterval, useUpdate } from 'react-use';
 import styled from 'styled-components';
 
@@ -103,13 +103,13 @@ const ComicViewerCore: React.FC<Props> = ({ episodeId, height }) => {
 
   const { data: episode } = useEpisode({ params: { episodeId } });
 
-  const containerRef = useRef<HTMLDivElement | null>(null);
-  const scrollViewRef = useRef<HTMLDivElement | null>(null);
+  const [container, containerRef] = useState<HTMLDivElement | null>(null);
+  const [scrollView, scrollViewRef] = useState<HTMLDivElement | null>(null);
 
   // コンテナの幅
-  const cqw = (containerRef.current?.getBoundingClientRect().width ?? 0) / 100;
+  const cqw = (container?.getBoundingClientRect().width ?? 0) / 100;
   // コンテナの高さ
-  const cqh = (containerRef.current?.getBoundingClientRect().height ?? 0) / 100;
+  const cqh = (container?.getBoundingClientRect().height ?? 0) / 100;
 
   // 1画面に表示できるページ数（1 or 2）
   const pageCountParView = (100 * cqw) / (100 * cqh) < (2 * IMAGE_WIDTH) / IMAGE_HEIGHT ? 1 : 2;
@@ -181,41 +181,29 @@ const ComicViewerCore: React.FC<Props> = ({ episodeId, height }) => {
     const handleResize = (entries: ResizeObserverEntry[]) => {
       if (prevContentRect != null && prevContentRect.width !== entries[0]?.contentRect.width) {
         requestAnimationFrame(() => {
-          scrollViewRef.current?.scrollBy({
+          scrollView?.scrollBy({
             behavior: 'instant',
-            left: getScrollToLeft({ pageCountParView, pageWidth, scrollView: scrollViewRef.current }),
+            left: getScrollToLeft({ pageCountParView, pageWidth, scrollView }),
           });
         });
       }
       prevContentRect = entries[0]?.contentRect ?? null;
     };
 
-    scrollViewRef.current?.addEventListener('pointerdown', handlePointerDown, {
-      passive: true,
-      signal: abortController.signal,
-    });
-    scrollViewRef.current?.addEventListener('pointermove', handlePointerMove, {
-      passive: true,
-      signal: abortController.signal,
-    });
-    scrollViewRef.current?.addEventListener('pointerup', handlePointerUp, {
-      passive: true,
-      signal: abortController.signal,
-    });
-    scrollViewRef.current?.addEventListener('scroll', handleScroll, { passive: true, signal: abortController.signal });
-    scrollViewRef.current?.addEventListener('scrollend', handleScrollEnd, {
-      passive: true,
-      signal: abortController.signal,
-    });
+    scrollView?.addEventListener('pointerdown', handlePointerDown, { passive: true, signal: abortController.signal });
+    scrollView?.addEventListener('pointermove', handlePointerMove, { passive: true, signal: abortController.signal });
+    scrollView?.addEventListener('pointerup', handlePointerUp, { passive: true, signal: abortController.signal });
+    scrollView?.addEventListener('scroll', handleScroll, { passive: true, signal: abortController.signal });
+    scrollView?.addEventListener('scrollend', handleScrollEnd, { passive: true, signal: abortController.signal });
 
     const resizeObserver = new ResizeObserver(handleResize);
-    scrollViewRef.current && resizeObserver.observe(scrollViewRef.current);
+    scrollView && resizeObserver.observe(scrollView);
     abortController.signal.addEventListener('abort', () => resizeObserver.disconnect(), { once: true });
 
     return () => {
       abortController.abort();
     };
-  }, [pageCountParView, pageWidth]);
+  }, [pageCountParView, pageWidth, scrollView]);
 
   return (
     <_Container ref={containerRef}>
