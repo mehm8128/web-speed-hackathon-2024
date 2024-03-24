@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
-import { useUpdate } from 'react-use';
+import { useRef } from 'react';
+import { useInterval, useUpdate } from 'react-use';
 import styled from 'styled-components';
 
 import { ComicViewerCore } from '../../../features/viewer/components/ComicViewerCore';
@@ -37,6 +37,7 @@ const clamp = (num: number, clamp: number, higher: number) =>
 export const ComicViewer: React.FC<Props> = ({ episodeId }) => {
   // 画面のリサイズに合わせて再描画する
   const rerender = useUpdate();
+  useInterval(rerender, 1000);
 
   const ref = useRef<HTMLDivElement | null>(null);
 
@@ -52,17 +53,17 @@ export const ComicViewer: React.FC<Props> = ({ episodeId }) => {
   // ビュアーの高さ
   const viewerHeight = clamp(candidatePageHeight, MIN_VIEWER_HEIGHT, MAX_VIEWER_HEIGHT);
 
-  useEffect(() => {
-    const resize = () => {
-      rerender();
-    };
+  // useEffect(() => {
+  //   const resize = () => {
+  //     rerender();
+  //   };
 
-    window.addEventListener('resize', resize);
+  //   window.addEventListener('resize', resize);
 
-    return () => {
-      window.removeEventListener('resize', resize);
-    };
-  }, [rerender]);
+  //   return () => {
+  //     window.removeEventListener('resize', resize);
+  //   };
+  // }, [rerender]);
 
   return (
     <_Container ref={ref}>
