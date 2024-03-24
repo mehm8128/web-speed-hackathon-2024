@@ -76,15 +76,15 @@ export const BookEditContent: React.FC<BookEditContentProps> = ({ book, onEditCo
       },
     );
   };
-  const values = useWatch<Schema>({ control: form.control });
+  const imgValue = useWatch({ control: form.control, name: 'image' });
 
   const [avatorUrl, updateAvatorUrl] = useState<string | undefined>(undefined);
   useEffect(() => {
-    if (values.image == null) return;
-    const url = URL.createObjectURL(values.image);
+    if (imgValue == null) return;
+    const url = URL.createObjectURL(imgValue);
     updateAvatorUrl(url);
     return () => URL.revokeObjectURL(url);
-  }, [values.image]);
+  }, [imgValue]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
