@@ -52,14 +52,6 @@ class AuthorRepository implements AuthorRepositoryInterface {
               name: true,
             },
             with: {
-              episodes: {
-                columns: {
-                  chapter: true,
-                  description: true,
-                  id: true,
-                  name: true,
-                },
-              },
               image: {
                 columns: {
                   alt: true,
@@ -104,37 +96,6 @@ class AuthorRepository implements AuthorRepositoryInterface {
             return like(author.name, `%${options.query.name}%`);
           }
           return;
-        },
-        with: {
-          books: {
-            columns: {
-              description: true,
-              id: true,
-              name: true,
-            },
-            with: {
-              episodes: {
-                columns: {
-                  chapter: true,
-                  description: true,
-                  id: true,
-                  name: true,
-                },
-              },
-              image: {
-                columns: {
-                  alt: true,
-                  id: true,
-                },
-              },
-            },
-          },
-          image: {
-            columns: {
-              alt: true,
-              id: true,
-            },
-          },
         },
       });
 
