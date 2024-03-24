@@ -135,10 +135,10 @@ export const BookListPage: React.FC = () => {
               <Radio color="gray.400" colorScheme="teal" {...form.register('kind')} value={BookSearchKind.BookName}>
                 作品名
               </Radio>
-              <Radio color="gray.400" colorScheme="teal" value={BookSearchKind.AuthorId}>
+              <Radio color="gray.400" colorScheme="teal" {...form.register('kind')} value={BookSearchKind.AuthorId}>
                 作者 ID
               </Radio>
-              <Radio color="gray.400" colorScheme="teal" value={BookSearchKind.AuthorName}>
+              <Radio color="gray.400" colorScheme="teal" {...form.register('kind')} value={BookSearchKind.AuthorName}>
                 作者名
               </Radio>
             </Stack>
