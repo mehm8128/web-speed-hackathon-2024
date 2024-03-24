@@ -99,7 +99,7 @@ type Props = {
 const ComicViewerCore: React.FC<Props> = ({ episodeId, height }) => {
   // 画面のリサイズに合わせて再描画する
   const rerender = useUpdate();
-  useInterval(rerender, 1000);
+  useInterval(rerender, 0);
 
   const { data: episode } = useEpisode({ params: { episodeId } });
 

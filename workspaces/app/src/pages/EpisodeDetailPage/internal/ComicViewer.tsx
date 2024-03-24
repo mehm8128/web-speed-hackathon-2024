@@ -37,7 +37,7 @@ const clamp = (num: number, clamp: number, higher: number) =>
 export const ComicViewer: React.FC<Props> = ({ episodeId }) => {
   // 画面のリサイズに合わせて再描画する
   const rerender = useUpdate();
-  useInterval(rerender, 1000);
+  useInterval(rerender, 0);
 
   const ref = useRef<HTMLDivElement | null>(null);
 
