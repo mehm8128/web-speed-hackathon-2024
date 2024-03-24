@@ -1,5 +1,6 @@
 import { encoding } from '@hapi/accept';
 import { ZstdInit } from '@oneidentity/zstd-js/asm/index.cjs.js';
+import { compress } from 'hono/compress';
 import { createMiddleware } from 'hono/factory';
 
 const zstdInit = ZstdInit();
@@ -27,6 +28,7 @@ export const compressMiddleware = createMiddleware(async (c, next) => {
     }
     default: {
       c.res.headers.append('Cache-Control', 'no-transform');
+      compress();
       break;
     }
   }
