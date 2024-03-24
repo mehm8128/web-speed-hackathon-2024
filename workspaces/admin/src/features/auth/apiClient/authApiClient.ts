@@ -22,7 +22,7 @@ export const authApiClient: AuthApiClient = {
   fetchAuthUser$$key: () => [
     {
       method: 'get',
-      requestUrl: `/api/v1/admin/logout`,
+      requestUrl: `/api/v1/admin/me`,
     },
   ],
   login: async ({ body }) => {
