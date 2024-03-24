@@ -1,29 +1,12 @@
-import {
-  Button,
-  Divider,
-  Flex,
-  Modal,
-  ModalCloseButton,
-  ModalContent,
-  ModalOverlay,
-  Stack,
-  Table,
-  TableContainer,
-  Tbody,
-  Td,
-  Text,
-  Th,
-  Thead,
-  Tr,
-} from '@chakra-ui/react';
+import { Button, Divider, Flex, Modal, ModalCloseButton, ModalContent, ModalOverlay, Stack } from '@chakra-ui/react';
 import { Link } from '@tanstack/react-router';
 import { useState } from 'react';
 
 import { useBook } from '../../../../features/books/hooks/useBook';
-import { useEpisodeList } from '../../../../features/episodes/hooks/useEpisodeList';
 
 import { BookDetailContent } from './BookDetailContent';
 import { BookEditContent } from './BookEditContent';
+import { EpisodeList } from './EpisodeList';
 
 type Props = {
   bookId: string;
@@ -32,7 +15,6 @@ type Props = {
 };
 
 export const BookDetailModal: React.FC<Props> = ({ bookId, isOpen, onClose }) => {
-  const { data: episodeList } = useEpisodeList({ bookId });
   const { data: book } = useBook({ bookId });
 
   const [isEdit, toggleIsEdit] = useState(false);
@@ -55,51 +37,7 @@ export const BookDetailModal: React.FC<Props> = ({ bookId, isOpen, onClose }) =>
 
           <Divider />
 
-          <Flex flexGrow={1} flexShrink={1} overflow="hidden">
-            {episodeList != null && (
-              <>
-                {episodeList.length !== 0 ? (
-                  <TableContainer flexGrow={1} flexShrink={1} overflowY="auto">
-                    <Table aria-label="エピソード一覧" variant="striped">
-                      <Thead backgroundColor="white" position="sticky" top={0} zIndex={1}>
-                        <Tr>
-                          <Th w={120}></Th>
-                          <Th>エピソード名</Th>
-                        </Tr>
-                      </Thead>
-                      <Tbody>
-                        {episodeList.map((episode) => (
-                          <Tr key={episode.id}>
-                            <Td textAlign="center" verticalAlign="middle">
-                              <Button
-                                as={Link}
-                                colorScheme="teal"
-                                role="button"
-                                to={`/admin/books/${bookId}/episodes/${episode.id}`}
-                                variant="solid"
-                              >
-                                編集
-                              </Button>
-                            </Td>
-                            <Td verticalAlign="middle">
-                              <Text fontWeight="bold">{episode.name}</Text>
-                              <Text color="gray.400" fontSize="small">
-                                {episode.id}
-                              </Text>
-                            </Td>
-                          </Tr>
-                        ))}
-                      </Tbody>
-                    </Table>
-                  </TableContainer>
-                ) : (
-                  <Text align="center" flexGrow={1} flexShrink={1} pt={2}>
-                    エピソードがありません
-                  </Text>
-                )}
-              </>
-            )}
-          </Flex>
+          <EpisodeList bookId={bookId} />
 
           <Flex justifyContent="flex-end">
             <Button

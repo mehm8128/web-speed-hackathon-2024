@@ -14,8 +14,9 @@ import {
   StackItem,
   Textarea,
 } from '@chakra-ui/react';
-import { useFormik } from 'formik';
-import { forwardRef, memo, useEffect, useRef, useState } from 'react';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useEffect, useRef, useState } from 'react';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import * as yup from 'yup';
 
 import type { GetBookResponse } from '@wsh-2024/schema/src/api/books/GetBookResponse';
@@ -43,77 +44,131 @@ const schema = yup.object().shape({
     .matches(/^[\p{Script_Extensions=Hiragana}]+$/u, '作品名のふりがなはひらがなで入力してください'),
 });
 
+type Schema = yup.InferType<typeof schema>;
+
 export const BookEditContent: React.FC<BookEditContentProps> = ({ book, onEditComplete }) => {
   const { mutate: updateBook } = useUpdateBook();
 
-  const formik = useFormik({
-    initialValues: {
+  const form = useForm<Schema>({
+    defaultValues: {
       description: book.description,
-      id: book.id,
       image: undefined as File | undefined,
       name: book.name,
       nameRuby: book.nameRuby,
     },
-    onSubmit(values) {
-      updateBook(
-        {
-          bookId: values.id,
-          description: values.description,
-          image: values.image,
-          name: values.name,
-          nameRuby: values.nameRuby,
-        },
-        {
-          onSuccess() {
-            onEditComplete();
-          },
-        },
-      );
-    },
-    validationSchema: schema,
+    mode: 'onBlur',
+    resolver: yupResolver(schema),
   });
+
+  const onSubmit = (values: Schema) => {
+    updateBook(
+      {
+        bookId: book.id,
+        description: values.description,
+        image: values.image,
+        name: values.name,
+        nameRuby: values.nameRuby,
+      },
+      {
+        onSuccess() {
+          onEditComplete();
+        },
+      },
+    );
+  };
+  const values = useWatch<Schema>({ control: form.control });
 
   const [avatorUrl, updateAvatorUrl] = useState<string | undefined>(undefined);
   useEffect(() => {
-    if (formik.values.image == null) return;
-    const url = URL.createObjectURL(formik.values.image);
+    if (values.image == null) return;
+    const url = URL.createObjectURL(values.image);
     updateAvatorUrl(url);
     return () => URL.revokeObjectURL(url);
-  }, [formik.values.image]);
+  }, [values.image]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const onClick = () => {
-    formik.setFieldTouched('image', true, false);
     fileInputRef.current?.click();
   };
 
   return (
     <Box aria-label="作品編集" as="section">
-      <Box as="form" onSubmit={formik.handleSubmit}>
+      <Box as="form" onSubmit={form.handleSubmit(onSubmit)}>
         <Flex align="center" pb={2}>
           <Box flexShrink={0} position="relative">
             <Image aspectRatio="3 / 4" height={256} objectFit="cover" src={avatorUrl} width={192} />
 
-            <ImageInput ref={fileInputRef} onClick={onClick} setFieldValue={formik.setFieldValue} />
+            <FormControl
+              alignItems="center"
+              bg="rgba(0, 0, 0, 0.5)"
+              display="flex"
+              height="100%"
+              justifyContent="center"
+              left="50%"
+              position="absolute"
+              top="50%"
+              transform="translate(-50%, -50%)"
+              width="100%"
+            >
+              <Controller
+                control={form.control}
+                name="image"
+                render={() => (
+                  <Input
+                    ref={fileInputRef}
+                    hidden
+                    onChange={(ev) => {
+                      form.setValue('image', ev.target.files?.[0], { shouldTouch: true, shouldValidate: true });
+                    }}
+                    type="file"
+                  />
+                )}
+              />
+              <IconButton
+                _focus={{ background: 'none' }}
+                _hover={{ background: 'none' }}
+                aria-label="作品の画像を選択"
+                background="none"
+                height="100%"
+                icon={<AddIcon color="white" />}
+                onClick={onClick}
+                width="100%"
+              />
+            </FormControl>
           </Box>
           <Stack p={4} spacing={2} width="100%">
             <StackItem>
-              <RubyInput handleBlur={formik.handleBlur} handleChange={formik.handleChange} values={formik.values} />
+              <Input
+                aria-label="作品名（ふりがな）"
+                bgColor="white"
+                borderColor="gray.300"
+                fontSize="sm"
+                {...form.register('nameRuby')}
+                placeholder="作品名（ふりがな）"
+              />
             </StackItem>
             <StackItem>
-              <NameInput handleBlur={formik.handleBlur} handleChange={formik.handleChange} values={formik.values} />
+              <Input
+                aria-label="作品名"
+                bgColor="white"
+                borderColor="gray.300"
+                {...form.register('name')}
+                placeholder="作品名"
+              />
             </StackItem>
             <StackItem>
-              <DescriptionTextarea
-                handleBlur={formik.handleBlur}
-                handleChange={formik.handleChange}
-                values={formik.values}
+              <Textarea
+                aria-label="概要"
+                bgColor="white"
+                borderColor="gray.300"
+                {...form.register('description')}
+                placeholder="概要"
               />
             </StackItem>
           </Stack>
         </Flex>
-        {formik.isValidating ? (
+        {form.formState.isValidating ? (
           <Box>
             <Alert mb={4} status="info">
               <CircularProgress isIndeterminate color="green.600" mr={2} size="1em" />
@@ -122,20 +177,23 @@ export const BookEditContent: React.FC<BookEditContentProps> = ({ book, onEditCo
           </Box>
         ) : (
           <Box>
-            {(Object.keys(formik.errors) as Array<keyof typeof formik.errors>).map((key) => {
+            {(Object.keys(form.formState.errors) as Array<keyof typeof form.formState.errors>).map((key) => {
               return (
-                formik.touched[key] && (
-                  <Alert key={key} mb={4} status="error">
-                    <AlertIcon />
-                    {formik.errors[key]}
-                  </Alert>
-                )
+                <Alert key={key} mb={4} status="error">
+                  <AlertIcon />
+                  {form.formState.errors[key]?.message}
+                </Alert>
               );
             })}
           </Box>
         )}
         <Flex gap={4} justify="flex-end" pb={4}>
-          <Button colorScheme="teal" isDisabled={formik.isValidating || !formik.isValid} type="submit" variant="solid">
+          <Button
+            colorScheme="teal"
+            isDisabled={form.formState.isValidating || !form.formState.isValid}
+            type="submit"
+            variant="solid"
+          >
             決定
           </Button>
           <Button onClick={() => onEditComplete()}>キャンセル</Button>
@@ -144,119 +202,3 @@ export const BookEditContent: React.FC<BookEditContentProps> = ({ book, onEditCo
     </Box>
   );
 };
-
-const NameInput = memo(
-  ({
-    handleBlur,
-    handleChange,
-    values,
-  }: {
-    handleBlur: ReturnType<typeof useFormik>['handleBlur'];
-    handleChange: ReturnType<typeof useFormik>['handleChange'];
-    values: ReturnType<typeof useFormik>['values'];
-  }) => (
-    <Input
-      aria-label="作品名"
-      bgColor="white"
-      borderColor="gray.300"
-      name="name"
-      onBlur={handleBlur}
-      onChange={handleChange}
-      placeholder="作品名"
-      value={values['name']}
-    />
-  ),
-  (prevProps, nextProps) => prevProps.values['name'] === nextProps.values['name'],
-);
-NameInput.displayName = 'NameInput';
-
-const RubyInput = memo(
-  ({
-    handleBlur,
-    handleChange,
-    values,
-  }: {
-    handleBlur: ReturnType<typeof useFormik>['handleBlur'];
-    handleChange: ReturnType<typeof useFormik>['handleChange'];
-    values: ReturnType<typeof useFormik>['values'];
-  }) => (
-    <Input
-      aria-label="作品名（ふりがな）"
-      bgColor="white"
-      borderColor="gray.300"
-      fontSize="sm"
-      name="nameRuby"
-      onBlur={handleBlur}
-      onChange={handleChange}
-      placeholder="作品名（ふりがな）"
-      value={values['nameRuby']}
-    />
-  ),
-  (prevProps, nextProps) => prevProps.values['nameRuby'] === nextProps.values['nameRuby'],
-);
-RubyInput.displayName = 'RubyInput';
-
-const DescriptionTextarea = memo(
-  ({
-    handleBlur,
-    handleChange,
-    values,
-  }: {
-    handleBlur: ReturnType<typeof useFormik>['handleBlur'];
-    handleChange: ReturnType<typeof useFormik>['handleChange'];
-    values: ReturnType<typeof useFormik>['values'];
-  }) => (
-    <Textarea
-      aria-label="概要"
-      bgColor="white"
-      borderColor="gray.300"
-      name="description"
-      onBlur={handleBlur}
-      onChange={handleChange}
-      placeholder="概要"
-      value={values['description']}
-    />
-  ),
-  (prevProps, nextProps) => prevProps.values['description'] === nextProps.values['description'],
-);
-DescriptionTextarea.displayName = 'DescriptionTextarea';
-
-const ImageInput = memo(
-  forwardRef<HTMLInputElement, { onClick: () => void; setFieldValue: ReturnType<typeof useFormik>['setFieldValue'] }>(
-    ({ onClick, setFieldValue }, ref) => (
-      <FormControl
-        alignItems="center"
-        bg="rgba(0, 0, 0, 0.5)"
-        display="flex"
-        height="100%"
-        justifyContent="center"
-        left="50%"
-        position="absolute"
-        top="50%"
-        transform="translate(-50%, -50%)"
-        width="100%"
-      >
-        <Input
-          ref={ref}
-          hidden
-          onChange={(ev) => {
-            setFieldValue('image', ev.target.files?.[0], true);
-          }}
-          type="file"
-        />
-        <IconButton
-          _focus={{ background: 'none' }}
-          _hover={{ background: 'none' }}
-          aria-label="作品の画像を選択"
-          background="none"
-          height="100%"
-          icon={<AddIcon color="white" />}
-          onClick={onClick}
-          width="100%"
-        />
-      </FormControl>
-    ),
-  ),
-);
-
-ImageInput.displayName = 'ImageInput';
