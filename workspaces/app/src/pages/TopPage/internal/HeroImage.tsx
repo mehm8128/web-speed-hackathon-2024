@@ -75,7 +75,7 @@ void main() {
       renderer.setSize(width, height);
 
       const animate = () => {
-        requestAnimationFrame(animate);
+        // requestAnimationFrame(animate);
         renderer.render(scene, camera);
       };
       animate();
